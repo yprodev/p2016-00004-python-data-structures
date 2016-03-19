@@ -234,12 +234,60 @@ valid_straights = {frozenset(range(n, n + 5)) for n in range(2,7)} | \
 									{frozenset([9, 10, 'jack', 'queen', 'king'])	 } | \
 									{frozenset([10, 'jack', 'queen', 'king', 'ace'])	 }
 
-print(valid_straights)
+# print(valid_straights)
 
 
+# Best Hand
+# ==================================================
+# Having set up helper functions and helper structions called
+# valid_straights we now ready to write a fucntion called
+# best hand that will evaluate the hand of cards we will give
+# it. It will tell us the best hand according to the rules of
+# pocker. That are contained within these cards.
 
+from intertools import groupby, combinations
 
+def best_hand(hand):
 
+	# We are going to extract all the suits of all the cards
+	# hand is expected to be a set or some other iterable of cards. Will iterate through the all
+	# cards that we have and we will extract the suit for those cards. We will use the set
+	# comprehension because we want each card to be represent just once.
+	suits_in_hand = {card.suit for card in hand}
+	ranks_in_hand = {frozenset(cs) for _,cs in groupby(sorted(hand, key=rank2value), key=rank2value)}
+
+	high_card				 = best_card(hand)
+	twos_of_a_kind	 = {cs for cs in ranks_in_hand in len(cs) == 2}
+	threes_of_a_kind = {cs for cs in ranks_in_hand in len(cs) == 3}
+	fours_of_a_kind	 = {cs for cs in ranks_in_hand in len(cs) == 4}
+	straights				 = {cs for cs in combinations(hand, 5) if {c.rank for c in cs} in valid_straights}
+
+	if len(suits_in_hand) == 1 and straights:
+		return hand, 'straight flush'
+
+	if fours_of_a_kind:
+		return max(fours_of_a_kind, key=lambda cs: rank2value(best_card(cs))), 'four of a kind'
+
+	if threes_of_a_kind and twos_of_a_kind:
+		return max(threes_of_a_kind, key=lambda cs: rank2value(best_card(cs))) | \
+					 max(twos_of_a_kind,	 key=lambda cs: rank2value(best_card(cs))), 'full house'
+
+	if len(suits_in_hand) == 1:
+		return hand, 'flush'
+
+	if straights:
+		return max(straights, key=lambda cs: rank2value(best_card(cs))), 'straight'
+
+	if threes_of_a_kind:
+		return max(threes_of_a_kind, key=lambda cs: rank2value(best_card(cs))), 'three of a kind'
+
+	if len(twos_of_a_kind) == 2:
+		return twos_of_a_kind.pop() | twos_of_a_kind.pop(), 'two pairs'
+
+	if len(twos_of_a_kind) == 1:
+		return twos_of_a_kind.pop(), 'one pairs'
+
+	return {high_card,}, 'high card'
 
 
 
