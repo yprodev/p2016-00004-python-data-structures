@@ -32,11 +32,42 @@ print(quux['x'])
 # normally. But on Windows sometimes this code has the
 # potential to lock up your computer.
 
-from intertools import count
-
+from itertools import count
+'''
 try:
-	for m in count(1):
+	for num in count(1):
 		attrdict({i:i for i in range(1024*1024)})
 except MemoryError:
 	print('Out of memory after creating {} attrdicts'.format(num))
 
+'''
+
+# ==================================================
+# We call a collect function from gc module in order
+# to perform a gurbage collection.
+'''
+from gc import collect; collect()
+
+'''
+
+# ==================================================
+# Let's take a look at better formulation of this.
+# We are just assigning item syntax to a attribute
+# syntax. They are using the same arguments (self,
+# key). This will accomplish the same thing without
+# the memory cycle.
+
+class attrdict1(dict):
+	__getattr__ = dict.__getitem__
+	__setattr__ = dict.__setitem__
+	__delattr__ = dict.__delitem__
+
+
+# Let's evaluate this code.
+try:
+	for num in range(1,150+1):
+		attrdict1({1:1 for i in range(1024*1024)})
+except MemoryError:
+	print('Out of memory after creating {} attrdicts'.format(num))
+
+print('Survived creating {} attrdicts'.format(num+1))
