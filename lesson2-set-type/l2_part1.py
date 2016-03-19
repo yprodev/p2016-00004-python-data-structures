@@ -174,4 +174,86 @@ deck1 = { '{} of {}'.format(rank, suit) for rank in numbers | faces
 deck1.update({'high Jocker', 'low Jocker'})
 # It also could be a list
 # deck1.update(['high Jocker', 'low Jocker'])
-print(deck1)
+# print(deck1)
+
+
+# Example and Valid Straights
+# ==================================================
+# Let's take a look at how to score hands in the simple pocker game.
+# Insread of using the set of strings we are going to use the set of
+# tuples. We will use the name tuple data type from our collections
+# module and that way we will be able to pull out from a card of it's
+# suit and it's rank.
+from collections import namedtuple
+
+Card = namedtuple('Card', 'suit rank')
+deck2 = {Card(suit, rank) for rank in numbers | faces
+													for suit in suits}
+
+# print(deck2)
+
+# ==================================================
+# How we can implement a function that can determine the given hand
+# represent different combinations.
+'''
+		- straight flush
+		- four of a kind
+		- full house
+		- flush
+		- straight
+		- three of a kind
+		- two pair
+		- one pair
+		- high card
+
+
+		valid_straights = {set(range(n, n+5)) for n in range(2,7)}
+
+		We will get an error here.
+
+		'''
+# The set-type happens to be mutable. And one common correspondens
+# that we have in Python is that all of our mutable built-in types
+# are not hashable. As a concicuance we can not create a set of
+# sets. Because the elements of the set will not be would not be
+# hash. However, we will provide the easy workaround for this. In
+# addition for our set-type in Python we also provide with a
+# frozen set-type. The main difference - once it was provided it
+# can not be changed - it is frozen in place.
+
+'''
+valid_straights = {frozenset(range(n, n + 5)) for n in range(2,7)}
+print(valid_straights)
+
+'''
+
+valid_straights = {frozenset(range(n, n + 5)) for n in range(2,7)} | \
+									{frozenset(['ace', 2, 3, 4, 5])								 } | \
+									{frozenset([7, 8, 9, 10, 'jack'])							 } | \
+									{frozenset([8, 9, 10, 'jack', 'queen'])				 } | \
+									{frozenset([9, 10, 'jack', 'queen', 'king'])	 } | \
+									{frozenset([10, 'jack', 'queen', 'king', 'ace'])	 }
+
+print(valid_straights)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
