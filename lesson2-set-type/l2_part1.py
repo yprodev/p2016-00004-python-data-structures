@@ -290,7 +290,21 @@ def best_hand(hand):
 	return {high_card,}, 'high card'
 
 
+# Helper Functions
+# ==================================================
 
+def rank2value(card):
+	if card.rank in numbers:
+		return card.rank
+
+	return {'ace': 		14,
+					'king':		13,
+					'queen':	12,
+					'jack':		11,
+				 }[card.rank]
+
+def best_card(hand):
+	return max(hand, key=rank2value)
 
 
 
