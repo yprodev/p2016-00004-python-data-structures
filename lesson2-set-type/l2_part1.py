@@ -245,7 +245,7 @@ valid_straights = {frozenset(range(n, n + 5)) for n in range(2,7)} | \
 # it. It will tell us the best hand according to the rules of
 # pocker. That are contained within these cards.
 
-from intertools import groupby, combinations
+from itertools import groupby, combinations
 
 def best_hand(hand):
 
@@ -307,15 +307,28 @@ def best_card(hand):
 	return max(hand, key=rank2value)
 
 
+# Example Hands
+# ==================================================
+
+# %%time # This never works in this course
+
+from itertools import combinations
+
+example_hands = {}
+
+for hand in combinations(deck, 5):
+	cards, hand_type = best_hand(hand)
+	if hand_type not in example_hands:
+		example_hands[hand_type] = cards, hand
 
 
 
+# Displaying Example Hands
+# ==================================================
 
-
-
-
-
-
-
-
-
+for hand_type in example_hands:
+	print(hand_type)
+	print('=' * len(hand_type))
+	matched_cards, all_cards = example_hands[hand_type]
+	for cards in all_cards:
+		print('   ', '*' if card in matched_cards else ' ', '{} of {}'.format(card.rank, card.suit))
